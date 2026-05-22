@@ -24,7 +24,7 @@
         .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; }
         .status-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; background: #ffeaa7; color: #d63031; }
         
-        /* 🔔 ระบบแจ้งเตือน Custom Alert สวยงาม ปลอดภัย ไร้ชื่อเว็บกวนใจ */
+        /* 🔔 Custom PopUp แจ้งเตือนวิกฤต */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
         .modal-box { background: white; padding: 20px; border-radius: 16px; max-width: 340px; width: 100%; text-align: center; }
         .modal-title { font-size: 16px; font-weight: bold; color: var(--primary); margin-bottom: 8px; }
@@ -36,7 +36,7 @@
     <div id="custom-alert" class="modal-overlay">
         <div class="modal-box">
             <div id="modal-title" class="modal-title">📢 ระบบกำลังโหลด</div>
-            <div id="modal-body" class="modal-body">กำลังซิงค์ข้อมูลโปรไฟล์ LINE ของคุณสักครู่ค่ะ...</div>
+            <div id="modal-body" class="modal-body">กำลังเชื่อมต่อข้อมูลโปรไฟล์ LINE ของคุณสักครู่ค่ะ...</div>
             <button id="modal-btn" class="btn hidden" onclick="closeCustomAlert()">ตกลง เข้าใจแล้ว</button>
         </div>
     </div>
@@ -54,10 +54,10 @@
 
     <div class="container">
 
-        <div id="page-reserve" class="">
+        <div id="page-reserve">
             <div class="card">
                 <h2>🌿 ลงทะเบียนสั่งจองคิว</h2>
-                <p id="line-profile-text" style="font-size:12px; color:#666; background:#eee; padding:5px; border-radius:6px;">⏳ กำลังระบุตัวตนผ่าน LINE...</p>
+                <p id="line-profile-text" style="font-size:12px; color:#666; background:#eee; padding:5px; border-radius:6px;">⏳ กำลังตรวจสอบสิทธิ์ LINE...</p>
                 <form id="bookingForm">
                     <div class="form-group">
                         <label>ชื่อผู้รับสินค้า:</label>
@@ -70,7 +70,7 @@
                     <div class="form-group">
                         <label>📅 เลือกวันที่นัดรับสินค้าหน้าร้าน:</label>
                         <select id="res-date" required>
-                            <option value="">⏳ กำลังดึงวันเปิดร้านจากฐานข้อมูล...</option>
+                            <option value="">⏳ กำลังดึงวันเปิดร้าน...</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -86,7 +86,7 @@
             <div class="card">
                 <h2>🔍 รายการจองคิวของคุณ</h2>
                 <div id="status-container">
-                    <p style="text-align:center; color:#999;">กำลังดึงประวัติการจองจากบัญชีไลน์ของคุณ...</p>
+                    <p style="text-align:center; color:#999;">กำลังตรวจสอบประวัติคิวของคุณ...</p>
                 </div>
             </div>
         </div>
@@ -103,14 +103,14 @@
                     <label>แนบไฟล์ภาพสลิปหลักฐาน:</label>
                     <input type="file" id="slip-file" accept="image/*">
                 </div>
-                <button class="btn" onclick="showCustomAlert('🧾 ส่งข้อมูลเรียบร้อย', 'ขอบคุณมากค่ะ แอดมินกำลังเร่งตรวจสอบภาพหลักฐานให้ในตารางระบบนะคะ!', true)">ส่งหลักฐานการแจ้งโอน ➔</button>
+                <button class="btn" onclick="showCustomAlert('🧾 ส่งข้อมูลเรียบร้อย', 'ขอบคุณมากค่ะ ระบบกำลังบันทึกภาพสลิปตรวจสอบคิวงานให้นะคะ!', true)">ส่งหลักฐานการแจ้งโอน ➔</button>
             </div>
         </div>
 
         <div id="page-admin" class="hidden">
             <div class="card" style="border: 2px solid #c0392b;">
                 <h2 style="color:#c0392b;">⚙️ แผงควบคุมงานระบบแอดมิน (Admin)</h2>
-                <button class="btn" style="background:#34495e; margin-bottom:12px;" onclick="fetchAdminRows()">🔄 รีเฟรชคิวล่าสุดในชีท</button>
+                <button class="btn" style="background:#34495e; margin-bottom:12px;" onclick="fetchAdminRows()">🔄 รีเฟรชคิวล่าสุด</button>
                 <div id="admin-list"></div>
             </div>
         </div>
@@ -118,7 +118,7 @@
     </div>
 
     <script>
-        // 🚨 สลับค่าตัวแปร 2 ตัวนี้ให้เป็นของระบบร้านคุณเอง
+        // 🚨 สลับค่า 2 ช่องนี้ให้ตรงกับข้อมูลจริงของคุณ
         const LIFF_ID = '2010105389-6iknG2pA'; 
         const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyMEgYU0VBPybEXQIAyZGilOVPCnwhroPvJ43A4DoP4fWRLhsJVKKtSwmnozxiyIQp6/exec';
 
@@ -128,7 +128,6 @@
             initLiff();
         };
 
-        // 🌟 เริ่มต้นใช้งานระบบ LINE LIFF ดึงค่า UID ปลอดภัยข้ามแพลตฟอร์ม
         function initLiff() {
             liff.init({ liffId: LIFF_ID })
                 .then(() => {
@@ -139,16 +138,154 @@
                             USER_UID = profile.userId;
                             document.getElementById('line-profile-text').innerText = `👤 เชื่อมต่อ LINE: คุณ ${profile.displayName}`;
                             
-                            // 🚀 ยิงคำสั่งดึงข้อมูลผ่านโฮสต์ใหม่โดยใช้ฟังก์ชันเรียกข้ามโดเมนอย่างปลอดภัย
+                            // ดึงตารางปฏิทินหน้าร้านทันที
                             loadOpenDates();
                             checkAdminPermission();
-                            closeCustomAlert();
                         });
                     }
                 })
                 .catch(err => {
-                    showCustomAlert('❌ LIFF Error', 'กรุณาเปิดแอปพลิเคชันนี้ผ่านทางแอป LINE เท่านั้นนะคะ', true);
+                    showCustomAlert('❌ LIFF Error', 'กรุณาใช้งานผ่านหน้าต่างแอปพลิเคชัน LINE เท่านั้น', true);
                 });
+        }
+
+        // 🟢 เปลี่ยนโครงสร้างการดึง/ส่งข้อมูลมาใช้แบบ URL-Encoded เพื่อแก้ปัญหาระบบค้างถาวร
+        function callBackend(serializedData, callback) {
+            fetch(BACKEND_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(serializedData).toString()
+            })
+            .then(res => res.json())
+            .then(data => {
+                closeCustomAlert();
+                callback(data);
+            })
+            .catch(err => {
+                showCustomAlert('❌ ดึงข้อมูลไม่สำเร็จ', 'ระบบบล็อกการเข้าถึงชั่วคราว ให้กดเปิดหน้าต่างใหม่อีกครั้งค่ะ', true);
+            });
+        }
+
+        function loadOpenDates() {
+            callBackend({ action: 'getDates' }, function(response) {
+                const select = document.getElementById('res-date');
+                select.innerHTML = '';
+                if(response.success && response.dates.length > 0) {
+                    response.dates.forEach(d => {
+                        let opt = document.createElement('option');
+                        opt.value = d.value;
+                        opt.text = d.text;
+                        select.add(opt);
+                    });
+                    closeCustomAlert();
+                } else {
+                    select.innerHTML = '<option value="">❌ ไม่มีกำหนดวันเปิดร้านในสัปดาห์นี้</option>';
+                }
+            });
+        }
+
+        function checkAdminPermission() {
+            fetch(BACKEND_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ action: 'getAdminRows', uid: USER_UID }).toString()
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.isAdmin) {
+                    document.getElementById('tab-admin').style.display = 'block';
+                }
+            }).catch(e => {});
+        }
+
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "กำลังจองคิวงาน... ⏳";
+            btn.disabled = true;
+
+            const payload = {
+                action: 'saveBooking',
+                date: document.getElementById('res-date').value,
+                amount: document.getElementById('res-amount').value,
+                name: document.getElementById('cust-name').value,
+                phone: document.getElementById('cust-phone').value,
+                uid: USER_UID
+            };
+
+            callBackend(payload, function(result) {
+                if(result.success) {
+                    showCustomAlert('🎉 สั่งจองคิวสำเร็จ ' + result.id, 'ลงตารางคิวงานเรียบร้อย บัญชีบอทได้ยิงใบยืนยันเข้าไปในแชท LINE ของคุณเรียบร้อยแล้วค่ะ!', true);
+                    switchPage('status');
+                }
+                btn.innerText = "ยืนยันส่งสิทธิ์การจองคิว 🟢";
+                btn.disabled = false;
+            });
+        });
+
+        function fetchMyQueue() {
+            const container = document.getElementById('status-container');
+            container.innerHTML = "<p style='text-align:center;'>กำลังเปิดประวัติคิว...</p>";
+            
+            callBackend({ action: 'getMyQueue', uid: USER_UID }, function(res) {
+                if(res.success && res.queue.length > 0) {
+                    let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
+                    res.queue.forEach(item => {
+                        html += `
+                            <div style="border:1px solid #ddd; padding:12px; border-radius:8px; background:white;">
+                                <div>รหัสคิว: <b style="color:var(--primary);">${item.id}</b></div>
+                                <div style="font-size:12px; color:#666;">วันนัดรับ: ${item.date} | จำนวน: ${item.amount} ขวด</div>
+                                <div style="margin-top:5px;"><span class="status-badge">${item.status}</span></div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<p style="text-align:center; color:#999;">ไม่พบประวัติรายการจองคิวของคุณค่ะ</p>';
+                }
+            });
+        }
+
+        function fetchAdminRows() {
+            const div = document.getElementById('admin-list');
+            div.innerHTML = "<p style='text-align:center;'>กำลังเรียกฐานข้อมูลตารางคิว...</p>";
+            
+            callBackend({ action: 'getAdminRows', uid: USER_UID }, function(res) {
+                if(!res.success) { div.innerHTML = "❌ สิทธิ์แอดมินไม่ถูกต้อง"; return; }
+                div.innerHTML = "";
+                res.rows.forEach(r => {
+                    let item = document.createElement('div');
+                    item.style = "border-bottom:1px dashed #ccc; padding:10px 0; font-size:13px; background:white; margin-bottom:5px; padding:10px; border-radius:8px;";
+                    item.innerHTML = `
+                        <div><b>คิว: ${r.id}</b> | คุณ ${r.name} (${r.phone})</div>
+                        <div>นัดส่ง: ${r.date} | ยอดสั่ง: <b>${r.amount} ขวด</b></div>
+                        <div style="margin-top:5px;">
+                            สถานะ: <span style="background:#f1c40f; padding:2px 6px; border-radius:4px; font-weight:bold;">${r.status}</span>
+                            <select style="width:auto; display:inline-block; margin-left:5px; padding:2px;" onchange="updateStatusByAdmin('${r.id}', this.value)">
+                                <option value="">-- ปรับสถานะ --</option>
+                                <option value="ชำระเงินสำเร็จ">✅ ชำระเงินสำเร็จ</option>
+                                <option value="รอชำระเงิน">⏳ รอชำระเงิน</option>
+                                <option value="รับของแล้ว">🥤 รับของแล้ว</option>
+                                <option value="ยกเลิกออเดอร์">❌ ยกเลิกออเดอร์</option>
+                            </select>
+                        </div>
+                    `;
+                    div.appendChild(item);
+                });
+            });
+        }
+
+        function updateStatusByAdmin(bookingId, nextStatus) {
+            if(!nextStatus) return;
+            showCustomAlert('⏳ กำลังเปลี่ยนสถานะ', 'ระบบกำลังอัปเดตและแจ้งเตือนเข้าแอป LINE ของลูกค้า...', false);
+            
+            callBackend({ action: 'updateStatus', uid: USER_UID, bookingId: bookingId, nextStatus: nextStatus }, function(res) {
+                if(res.success) {
+                    showCustomAlert('⚙️ อัปเดตเสร็จสิ้น', 'ปรับสถานะรหัสคิว ' + bookingId + ' เรียบร้อยแล้ว!', true);
+                    fetchAdminRows();
+                }
+            });
         }
 
         function showCustomAlert(title, message, showButton = true) {
@@ -177,135 +314,6 @@
             
             if(pageId === 'status') fetchMyQueue();
             if(pageId === 'admin') fetchAdminRows();
-        }
-
-        // เรียกข้อมูลผ่าน API ข้ามแพลตฟอร์ม
-        function callBackend(actionData, callback) {
-            fetch(BACKEND_URL, {
-                method: 'POST',
-                body: JSON.stringify(actionData)
-            })
-            .then(res => res.json())
-            .then(data => callback(data))
-            .catch(err => {
-                showCustomAlert('❌ เชื่อมต่อล้มเหลว', 'ไม่สามารถคุยกับฐานข้อมูล Google Sheet หลังบ้านได้ครับ', true);
-            });
-        }
-
-        function loadOpenDates() {
-            callBackend({ action: 'getDates' }, function(response) {
-                const select = document.getElementById('res-date');
-                select.innerHTML = '';
-                if(response.success && response.dates.length > 0) {
-                    response.dates.forEach(d => {
-                        let opt = document.createElement('option');
-                        opt.value = d.value;
-                        opt.text = d.text;
-                        select.add(opt);
-                    });
-                } else {
-                    select.innerHTML = '<option value="">❌ ไม่มีกำหนดวันเปิดร้านในขณะนี้</option>';
-                }
-            });
-        }
-
-        function checkAdminPermission() {
-            callBackend({ action: 'getAdminRows', uid: USER_UID }, function(res) {
-                if(res.isAdmin) {
-                    document.getElementById('tab-admin').style.display = 'block'; // เปิดสิทธิ์แสดงแท็บแอดมินทันที
-                }
-            });
-        }
-
-        // บันทึกฟอร์มจองและยิงไลน์เตือนกลับ
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = "กำลังจองคิวและส่งแจ้งเตือนเข้า LINE... ⏳";
-            btn.disabled = true;
-
-            const payload = {
-                action: 'saveBooking',
-                data: {
-                    date: document.getElementById('res-date').value,
-                    amount: document.getElementById('res-amount').value,
-                    name: document.getElementById('cust-name').value,
-                    phone: document.getElementById('cust-phone').value,
-                    uid: USER_UID
-                }
-            };
-
-            callBackend(payload, function(result) {
-                if(result.success) {
-                    showCustomAlert('🎉 สำเร็จคิว ' + result.id, 'จองคิวเรียบร้อย! ระบบส่งรายละเอียดใบยืนยันเข้าไปใน LINE แชทของคุณแล้วนะคะ', true);
-                    switchPage('status');
-                }
-                btn.innerText = "ยืนยันส่งสิทธิ์การจองคิว 🟢";
-                btn.disabled = false;
-            });
-        });
-
-        function fetchMyQueue() {
-            const container = document.getElementById('status-container');
-            callBackend({ action: 'getMyQueue', uid: USER_UID }, function(res) {
-                if(res.success && res.queue.length > 0) {
-                    let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
-                    res.queue.forEach(item => {
-                        html += `
-                            <div style="border:1px solid #ddd; padding:12px; border-radius:8px;">
-                                <div>รหัสจอง: <b style="color:var(--primary);">${item.id}</b> (คุณ ${item.name})</div>
-                                <div style="font-size:12px; color:#666;">วันนัดรับ: ${item.date} | จำนวน: ${item.amount} ขวด</div>
-                                <div style="margin-top:5px;"><span class="status-badge">${item.status}</span></div>
-                            </div>
-                        `;
-                    });
-                    html += '</div>';
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = '<p style="text-align:center; color:#999;">คุณยังไม่มีประวัติการทำรายการสั่งจองค่ะ</p>';
-                }
-            });
-        }
-
-        function fetchAdminRows() {
-            const div = document.getElementById('admin-list');
-            div.innerHTML = "<p style='text-align:center;'>กำลังดึงคิวงานหน้าร้าน...</p>";
-            
-            callBackend({ action: 'getAdminRows', uid: USER_UID }, function(res) {
-                if(!res.success) { div.innerHTML = "❌ คุณไม่มีสิทธิ์เข้าถึงหน้านี้"; return; }
-                div.innerHTML = "";
-                res.rows.forEach(r => {
-                    let item = document.createElement('div');
-                    item.style = "border-bottom:1px dashed #ccc; padding:10px 0; font-size:13px;";
-                    item.innerHTML = `
-                        <div><b>คิว: ${r.id}</b> | คุณ ${r.name} (${r.phone})</div>
-                        <div>วันรับ: ${r.date} | สั่ง: <b>${r.amount} ขวด</b></div>
-                        <div style="margin-top:4px;">
-                            สถานะปัจจุบัน: <span style="background:#f1c40f; padding:2px 5px; border-radius:4px; font-weight:bold;">${r.status}</span>
-                            <select style="width:auto; display:inline-block; margin-left:5px; padding:2px;" onchange="updateStatusByAdmin('${r.id}', this.value)">
-                                <option value="">-- ปรับสถานะ --</option>
-                                <option value="ชำระเงินสำเร็จ">✅ ชำระเงินสำเร็จ</option>
-                                <option value="รอชำระเงิน">⏳ รอชำระเงิน</option>
-                                <option value="รับของแล้ว">🥤 รับของแล้ว</option>
-                                <option value="ยกเลิกออเดอร์">❌ ยกเลิกออเดอร์</option>
-                            </select>
-                        </div>
-                    `;
-                    div.appendChild(item);
-                });
-            });
-        }
-
-        function updateStatusByAdmin(bookingId, nextStatus) {
-            if(!nextStatus) return;
-            showCustomAlert('⏳ ระบบกำลังประมวลผล', 'กำลังปรับปรุงสถานะคิวลูกค้าและส่งสัญญาณเข้า LINE...', false);
-            
-            callBackend({ action: 'updateStatus', uid: USER_UID, bookingId: bookingId, nextStatus: nextStatus }, function(res) {
-                if(res.success) {
-                    showCustomAlert('⚙️ อัปเดตสำเร็จ', 'ปรับรหัสคิว ' + bookingId + ' เป็น "' + nextStatus + '" และยิงไลน์แจ้งลูกค้าเสร็จสิ้นครับ', true);
-                    fetchAdminRows();
-                }
-            });
         }
     </script>
 </body>
