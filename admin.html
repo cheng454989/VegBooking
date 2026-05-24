@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin</title>
+<style>
+body{
+font-family:sans-serif;
+background:#f2f4f2;
+padding:15px;
+margin:0;
+}
+.card{
+background:white;
+padding:20px;
+border-radius:20px;
+margin-bottom:15px;
+}
+input,button,select{
+width:100%;
+padding:14px;
+margin-top:8px;
+font-size:18px;
+border-radius:10px;
+border:1px solid #ccc;
+box-sizing:border-box;
+}
+button{
+background:#2d5a27;
+color:white;
+border:none;
+}
+.queue{
+padding:15px;
+border-radius:15px;
+background:#f7f7f7;
+margin-top:10px;
+}
+.big{
+font-size:30px;
+font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="card" id="loginBox">
+<h2>🔐 Admin Login</h2>
+<input id="phone" placeholder="เบอร์โทร">
+<input id="password" type="password" placeholder="รหัสผ่าน">
+<button onclick="login()">เข้าสู่ระบบ</button>
+</div>
+
+<div id="adminPanel" style="display:none">
+
+<div class="card">
+<div class="big" id="totalQueue">0 คิว</div>
+<div id="totalBottle">0 ขวด</div>
+</div>
+
+<div class="card">
+<h2>⚙️ ตั้งค่าวันเปิดร้าน</h2>
+
+<input id="settingDate" type="date">
+
+<select id="settingStatus">
+<option>✅ เปิดร้าน</option>
+<option>❌ ปิดร้าน</option>
+</select>
+
+<input id="production" type="number" placeholder="จำนวนผลิตได้">
+<input id="publicLimit" type="number" placeholder="จำนวนเปิดขาย">
+<input id="reserve" type="number" placeholder="จำนวนกันสำรอง">
+<input id="limitPerPerson" type="number" placeholder="จำกัดต่อคน">
+<input id="timeslot" placeholder="08:00-09:00,09:00-10:00">
+<input id="maxOrder" type="number" placeholder="max orders">
+<input id="cutoff" placeholder="cutoff เช่น 18:00">
+
+<button onclick="saveSettings()">
+บันทึก
+</button>
+</div>
+
+<div class="card">
+<h2>📋 คิววันนี้</h2>
+<div id="queueList"></div>
+</div>
+
+</div>
+
+<script>
+
+const API_URL = 'YOUR_GAS_WEBAPP_URL';
+
+async function api(data){
+
+const res = await fetch(API_URL,{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify(data)
+});
+
+return await res.json();
+
+}
+
+async function login(){
+
+const result = await api({
+action:'adminLogin',
+phone:document.getElementById('phone').value,
+password:document.getElementById('password').value
+});
+
+if(result.success){
+
+localStorage.setItem('admin_login','yes');
+
+document.getElementById('loginBox').style.display = 'none';
+document.getElementById('adminPanel').style.display = 'block';
+
+loadDashboard();
+
+}else{
+
+alert('login fail');
+
+}
+
+}
+
+async function loadDashboard(){
+
+const result = await api({
+action:'getDashboard'
+});
+
+document.getElementById('totalQueue').innerText = result.totalQueue + ' คิว';
+document.getElementById('totalBottle').innerText = result.totalBottle + ' ขวด';
+
+let html = '';
+
+result.queue.forEach(q=>{
+
+html += `
+<div class="queue">
+<h3>${q.bookingId}</h3>
+<div>${q.name}</div>
+<div>${q.phone}</div>
+<div>${q.time}</div>
+<div>${q.amount} ขวด</div>
+<div>${q.total} บาท</div>
+<div>${q.paymentStatus}</div>
+
+<button onclick="approve('${q.bookingId}')">
+อนุมัติชำระ
+</button>
+
+</div>
+`;
+
+});
+
+document.getElementById('queueList').innerHTML = html;
+
+}
+
+async function approve(id){
+
+await api({
+action:'updateBookingStatus',
+bookingId:id,
+status:'ชำระแล้ว'
+});
+
+loadDashboard();
+
+}
+
+async function saveSettings(){
+
+await api({
+action:'saveSettings',
+date:document.getElementById('settingDate').value,
+status:document.getElementById('settingStatus').value,
+production:document.getElementById('production').value,
+publicLimit:document.getElementById('publicLimit').value,
+reserve:document.getElementById('reserve').value,
+limitPerPerson:document.getElementById('limitPerPerson').value,
+timeslot:document.getElementById('timeslot').value,
+maxOrder:document.getElementById('maxOrder').value,
+cutoff:document.getElementById('cutoff').value
+});
+
+alert('บันทึกสำเร็จ');
+
+}
+
+</script>
+
+</body>
+</html>
