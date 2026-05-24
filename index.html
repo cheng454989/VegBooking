@@ -1,847 +1,238 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-
-<meta charset="UTF-8" />
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
-/>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tuk Tuk Cafe</title>
-
-<link
-  href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap"
-  rel="stylesheet"
-/>
-
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
 <style>
-
-:root{
-
-  --green:#2d5a27;
-  --light:#f5f7f5;
-  --border:#dfe6df;
-  --danger:#c0392b;
-}
-
-*{
-
-  box-sizing:border-box;
-  font-family:'Prompt',sans-serif;
-}
-
 body{
-
-  margin:0;
-  background:var(--light);
-  color:#222;
+font-family:sans-serif;
+background:#f4f7f3;
+padding:15px;
+margin:0;
 }
-
-.header{
-
-  background:white;
-  padding:20px;
-  text-align:center;
-  border-bottom:1px solid #eee;
-}
-
-.header h1{
-
-  margin:0;
-  color:var(--green);
-  font-size:28px;
-}
-
-.container{
-
-  max-width:520px;
-  margin:auto;
-  padding:16px;
-}
-
 .card{
-
-  background:white;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:16px;
-  box-shadow:0 3px 12px rgba(0,0,0,0.05);
+background:white;
+padding:20px;
+border-radius:20px;
+margin-bottom:15px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
-
-.form-group{
-
-  margin-bottom:14px;
+input,select,textarea,button{
+width:100%;
+padding:14px;
+margin-top:8px;
+border-radius:10px;
+border:1px solid #ccc;
+font-size:18px;
+box-sizing:border-box;
 }
-
-label{
-
-  display:block;
-  margin-bottom:6px;
-  font-weight:600;
-  font-size:14px;
-}
-
-input,
-select{
-
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  font-size:16px;
-}
-
 button{
-
-  width:100%;
-  border:none;
-  border-radius:14px;
-  background:var(--green);
-  color:white;
-  padding:16px;
-  font-size:20px;
-  font-weight:700;
-  cursor:pointer;
+background:#2d5a27;
+color:white;
+border:none;
+font-weight:bold;
 }
-
-button:disabled{
-
-  opacity:0.5;
-}
-
 .status{
-
-  margin-top:12px;
-  padding:12px;
-  border-radius:12px;
-  font-size:14px;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
 }
-
-.success{
-
-  background:#eaf8ea;
-  color:#1f6b1f;
+.green{
+background:#d4edda;
 }
-
-.error{
-
-  background:#ffeaea;
-  color:var(--danger);
+.orange{
+background:#fff3cd;
 }
-
-.loading{
-
-  text-align:center;
-  color:#666;
-  padding:10px;
-}
-
-.small{
-
-  font-size:13px;
-  color:#666;
-}
-
-.queue-card{
-
-  border:1px solid #eee;
-  border-radius:12px;
-  padding:12px;
-  margin-bottom:10px;
-}
-
-.badge{
-
-  display:inline-block;
-  padding:4px 10px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:700;
-}
-
-.badge.wait{
-
-  background:#fff1d6;
-  color:#d68910;
-}
-
-.badge.ok{
-
-  background:#e8f8e8;
-  color:#1e8449;
-}
-
-.nav{
-
-  display:flex;
-  background:white;
-  border-bottom:1px solid #eee;
-}
-
-.nav button{
-
-  border-radius:0;
-  font-size:14px;
-  padding:14px;
-  background:white;
-  color:#666;
-}
-
-.nav button.active{
-
-  color:var(--green);
-  border-bottom:3px solid var(--green);
-}
-
-.hidden{
-
-  display:none;
-}
-
 </style>
-
 </head>
-
 <body>
 
-<div class="header">
+<div class="card">
+<h2>🌱 จองน้ำผักปั่น</h2>
 
-  <h1>🌿 Tuk Tuk Cafe</h1>
+<input id="name" placeholder="ชื่อ">
+<input id="phone" placeholder="เบอร์โทร">
 
-  <div
-    id="profile"
-    class="small"
-  >
-    กำลังเชื่อมต่อ LINE...
-  </div>
+<select id="date"></select>
+<select id="time"></select>
 
+<input id="amount" type="number" value="1">
+
+<textarea id="note" placeholder="หมายเหตุ"></textarea>
+
+<div id="totalBox"></div>
+
+<button onclick="submitBooking()">
+ยืนยันการจอง
+</button>
 </div>
 
-<div class="nav">
+<div class="card">
+<h2>📋 คิวของฉัน</h2>
 
-  <button
-    id="nav-book"
-    class="active"
-    onclick="showPage('booking')"
-  >
-    จองคิว
-  </button>
+<button onclick="loadMyBooking()">
+โหลดคิวล่าสุด
+</button>
 
-  <button
-    id="nav-queue"
-    onclick="showPage('queue')"
-  >
-    คิวของฉัน
-  </button>
-
-</div>
-
-<div class="container">
-
-  <!-- BOOKING PAGE -->
-
-  <div id="page-booking">
-
-    <div class="card">
-
-      <h2>🥤 จองน้ำผักปั่น</h2>
-
-      <form id="bookingForm">
-
-        <div class="form-group">
-
-          <label>ชื่อผู้รับสินค้า</label>
-
-          <input
-            type="text"
-            id="cust-name"
-            required
-          />
-
-        </div>
-
-        <div class="form-group">
-
-          <label>เบอร์โทรศัพท์</label>
-
-          <input
-            type="tel"
-            id="cust-phone"
-            required
-          />
-
-        </div>
-
-        <div class="form-group">
-
-          <label>เลือกวันรับสินค้า</label>
-
-          <select
-            id="res-date"
-            required
-          >
-
-            <option>
-              กำลังโหลด...
-            </option>
-
-          </select>
-
-        </div>
-
-        <div class="form-group">
-
-          <label>จำนวนขวด</label>
-
-          <input
-            type="number"
-            id="res-amount"
-            min="1"
-            value="1"
-            required
-          />
-
-        </div>
-
-        <button
-          type="submit"
-          id="submit-btn"
-        >
-          ยืนยันการจอง
-        </button>
-
-      </form>
-
-      <div id="msg"></div>
-
-    </div>
-
-  </div>
-
-  <!-- QUEUE PAGE -->
-
-  <div
-    id="page-queue"
-    class="hidden"
-  >
-
-    <div class="card">
-
-      <h2>📋 คิวของฉัน</h2>
-
-      <div id="queue-list">
-
-        <div class="loading">
-          กำลังโหลด...
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
+<div id="myBooking"></div>
 </div>
 
 <script>
 
-/****************************************
- * CONFIG
- ****************************************/
+const API_URL = 'YOUR_GAS_WEBAPP_URL';
+const PRICE = 30;
 
-const LIFF_ID =
-'YOUR_LIFF_ID';
+let openDates = [];
 
-const BACKEND_URL =
-'https://script.google.com/macros/s/AKfycbyqeyb1AcBu4Z8_YjIVN9zIwuWCX2WG7A50ooTZmlPUhsIaDdlSKoTauIDSUI-P/exec';
+window.onload = ()=>{
 
-/****************************************
- * GLOBAL
- ****************************************/
+loadDates();
 
-let USER_UID = '';
+const phone = localStorage.getItem('customer_phone');
 
-let CONFIG_DATES = [];
-
-/****************************************
- * START
- ****************************************/
-
-document.addEventListener(
-
-  'DOMContentLoaded',
-
-  async function(){
-
-    await initLiff();
-
-    await loadDates();
-  }
-);
-
-/****************************************
- * LIFF
- ****************************************/
-
-async function initLiff(){
-
-  try{
-
-    await liff.init({
-
-      liffId: LIFF_ID
-    });
-
-    if(!liff.isLoggedIn()){
-
-      liff.login();
-
-      return;
-    }
-
-    const profile =
-      await liff.getProfile();
-
-    USER_UID =
-      profile.userId;
-
-    document
-      .getElementById('profile')
-      .innerText =
-      '👤 ' + profile.displayName;
-
-  }catch(err){
-
-    console.error(err);
-
-    document
-      .getElementById('profile')
-      .innerText =
-      '❌ LIFF ERROR';
-  }
+if(phone){
+  loadMyBooking();
 }
 
-/****************************************
- * API
- ****************************************/
+}
 
 async function api(data){
 
-  const response =
-    await fetch(
+const res = await fetch(API_URL,{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify(data)
+});
 
-      BACKEND_URL,
+return await res.json();
 
-      {
-
-        method:'POST',
-
-        mode:'cors',
-
-        headers:{
-
-          'Content-Type':
-          'application/x-www-form-urlencoded'
-        },
-
-        body:new URLSearchParams(data)
-      }
-    );
-
-  return await response.json();
 }
-
-/****************************************
- * LOAD DATES
- ****************************************/
 
 async function loadDates(){
 
-  try{
+const result = await api({
+action:'getOpenDates'
+});
 
-    const result =
-      await api({
+openDates = result.dates;
 
-        action:'getDates'
-      });
+const select = document.getElementById('date');
 
-    const select =
-      document.getElementById(
-        'res-date'
-      );
+select.innerHTML = '';
 
-    select.innerHTML = '';
+result.dates.forEach(d=>{
 
-    if(
-      result.success &&
-      result.dates.length > 0
-    ){
+const opt = document.createElement('option');
+opt.value = d.date;
+opt.innerText = d.display;
 
-      CONFIG_DATES =
-        result.dates;
+select.appendChild(opt);
 
-      result.dates.forEach(d=>{
+});
 
-        const opt =
-          document.createElement(
-            'option'
-          );
+updateTime();
 
-        opt.value =
-          d.value;
-
-        opt.innerText =
-          d.text;
-
-        opt.dataset.limit =
-          d.limitPerPerson;
-
-        opt.dataset.full =
-          d.isFull;
-
-        select.appendChild(opt);
-      });
-
-      updateLimit();
-
-    }else{
-
-      select.innerHTML =
-      '<option>ไม่มีวันเปิดจอง</option>';
-    }
-
-  }catch(err){
-
-    console.error(err);
-  }
 }
 
-/****************************************
- * DYNAMIC LIMIT
- ****************************************/
+function updateTime(){
 
-document
-.getElementById('res-date')
-.addEventListener(
+const date = document.getElementById('date').value;
 
-  'change',
+const found = openDates.find(x=>x.date==date);
 
-  updateLimit
-);
+const timeSelect = document.getElementById('time');
 
-function updateLimit(){
+if(!found) return;
 
-  const select =
-    document.getElementById(
-      'res-date'
-    );
+const slots = found.timeslot.split(',');
 
-  const amount =
-    document.getElementById(
-      'res-amount'
-    );
+timeSelect.innerHTML = '';
 
-  const btn =
-    document.getElementById(
-      'submit-btn'
-    );
+slots.forEach(s=>{
 
-  const option =
-    select.options[
-      select.selectedIndex
-    ];
+const opt = document.createElement('option');
+opt.value = s.trim();
+opt.innerText = s.trim();
 
-  const limit =
-    Number(
-      option.dataset.limit || 5
-    );
+timeSelect.appendChild(opt);
 
-  const isFull =
-    option.dataset.full === 'true';
+});
 
-  amount.max = limit;
-
-  if(
-    Number(amount.value)
-    > limit
-  ){
-
-    amount.value = limit;
-  }
-
-  if(isFull){
-
-    btn.innerText =
-      'ลงชื่อสำรองคิว';
-
-  }else{
-
-    btn.innerText =
-      'ยืนยันการจอง';
-  }
 }
 
-/****************************************
- * SAVE BOOKING
- ****************************************/
+document.getElementById('date').addEventListener('change',updateTime);
 
-document
-.getElementById('bookingForm')
-.addEventListener(
+document.getElementById('amount').addEventListener('input',()=>{
 
-  'submit',
+const amount = Number(document.getElementById('amount').value);
 
-  async function(e){
+const total = amount * PRICE;
 
-    e.preventDefault();
+document.getElementById('totalBox').innerHTML = `
+<h3>
+ยอดชำระ ${total} บาท
+</h3>
+`;
 
-    const btn =
-      document.getElementById(
-        'submit-btn'
-      );
+});
 
-    btn.disabled = true;
+async function submitBooking(){
 
-    btn.innerText =
-      'กำลังบันทึก...';
+const payload = {
+action:'createBooking',
+name:document.getElementById('name').value,
+phone:document.getElementById('phone').value,
+date:document.getElementById('date').value,
+time:document.getElementById('time').value,
+amount:document.getElementById('amount').value,
+note:document.getElementById('note').value
+};
 
-    try{
+const result = await api(payload);
 
-      const result =
-        await api({
+if(result.success){
 
-          action:'saveBooking',
+localStorage.setItem('customer_phone',payload.phone);
 
-          uid:USER_UID,
+alert('จองสำเร็จ เลขคิว '+result.bookingId);
 
-          name:
-            document.getElementById(
-              'cust-name'
-            ).value,
+loadMyBooking();
 
-          phone:
-            document.getElementById(
-              'cust-phone'
-            ).value,
+}
 
-          date:
-            document.getElementById(
-              'res-date'
-            ).value,
+}
 
-          amount:
-            document.getElementById(
-              'res-amount'
-            ).value
-        });
+async function loadMyBooking(){
 
-      if(result.success){
+const phone = localStorage.getItem('customer_phone') || document.getElementById('phone').value;
 
-        showMessage(
+const result = await api({
+action:'getBooking',
+phone:phone
+});
 
-          `✅ จองสำเร็จ
-รหัส: ${result.id}
-สถานะ: ${result.status}`,
+let html = '';
 
-          true
-        );
+result.rows.forEach(r=>{
 
-        loadMyQueue();
-
-      }else{
-
-        showMessage(
-          result.error || 'ERROR'
-        );
-      }
-
-    }catch(err){
-
-      showMessage(err.toString());
-
-    }
-
-    btn.disabled = false;
-
-    updateLimit();
-  }
-);
-
-/****************************************
- * LOAD QUEUE
- ****************************************/
-
-async function loadMyQueue(){
-
-  const div =
-    document.getElementById(
-      'queue-list'
-    );
-
-  div.innerHTML =
-    '<div class="loading">กำลังโหลด...</div>';
-
-  try{
-
-    const result =
-      await api({
-
-        action:'getMyQueue',
-
-        uid:USER_UID
-      });
-
-    if(
-      result.success &&
-      result.queue.length > 0
-    ){
-
-      div.innerHTML = '';
-
-      result.queue.forEach(q=>{
-
-        const item =
-          document.createElement(
-            'div'
-          );
-
-        item.className =
-          'queue-card';
-
-        item.innerHTML =
-
-`
-<div>
-<b>${q.id}</b>
-</div>
-
-<div>
-📅 ${q.date}
-</div>
-
-<div>
-🥤 ${q.amount} ขวด
-</div>
-
-<div style="margin-top:8px;">
-
-<span class="badge ${
-q.status === 'สำรองคิว'
-? 'wait'
-: 'ok'
-}">
-
-${q.status}
-
-</span>
-
+html += `
+<div class="status green">
+<h3>${r.bookingId}</h3>
+<div>${r.date}</div>
+<div>${r.time}</div>
+<div>${r.amount} ขวด</div>
+<div>${r.total} บาท</div>
+<div>${r.paymentStatus}</div>
 </div>
 `;
 
-        div.appendChild(item);
-      });
+});
 
-    }else{
+document.getElementById('myBooking').innerHTML = html;
 
-      div.innerHTML =
-      '<div class="loading">ยังไม่มีรายการ</div>';
-    }
-
-  }catch(err){
-
-    div.innerHTML =
-    '<div class="loading">โหลดไม่สำเร็จ</div>';
-  }
-}
-
-/****************************************
- * PAGE
- ****************************************/
-
-function showPage(page){
-
-  document
-    .getElementById(
-      'page-booking'
-    )
-    .classList.add('hidden');
-
-  document
-    .getElementById(
-      'page-queue'
-    )
-    .classList.add('hidden');
-
-  document
-    .getElementById(
-      'nav-book'
-    )
-    .classList.remove('active');
-
-  document
-    .getElementById(
-      'nav-queue'
-    )
-    .classList.remove('active');
-
-  if(page === 'booking'){
-
-    document
-      .getElementById(
-        'page-booking'
-      )
-      .classList.remove('hidden');
-
-    document
-      .getElementById(
-        'nav-book'
-      )
-      .classList.add('active');
-
-  }else{
-
-    document
-      .getElementById(
-        'page-queue'
-      )
-      .classList.remove('hidden');
-
-    document
-      .getElementById(
-        'nav-queue'
-      )
-      .classList.add('active');
-
-    loadMyQueue();
-  }
-}
-
-/****************************************
- * MESSAGE
- ****************************************/
-
-function showMessage(
-  text,
-  success=false
-){
-
-  const div =
-    document.getElementById(
-      'msg'
-    );
-
-  div.className =
-    'status ' +
-    (success
-      ? 'success'
-      : 'error');
-
-  div.innerText =
-    text;
 }
 
 </script>
