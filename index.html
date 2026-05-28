@@ -1,353 +1,241 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จองน้ำผักปั่นหมอเขียว นวมินทร์46</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <style>
-        :root { --primary: #1e7e34; --primary-light: #e8f5e9; --accent: #f39c12; --bg: #f5f7f5; --danger: #c0392b; }
-        * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
-        body { background-color: var(--bg); margin: 0; padding: 0; color: #333; }
-        .header { background: var(--primary); color: white; text-align: center; padding: 18px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .header h1 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
-        
-        /* 🌿 Sticky Navigation Bar */
-        .nav-menu { display: flex; background: white; border-bottom: 1px solid #e0e0e0; position: sticky; top:0; z-index: 100; }
-        .nav-item { flex: 1; text-align: center; padding: 14px 2px; font-size: 13px; font-weight: 600; color: #666; cursor: pointer; transition: all 0.2s; }
-        .nav-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: var(--primary-light); }
-        
-        .container { max-width: 480px; margin: 15px auto; padding: 0 15px; padding-bottom: 40px; }
-        .card { background: white; padding: 22px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 15px; border: 1px solid #eaeaea; }
-        .card h2 { margin-top: 0; font-size: 16px; font-weight: 600; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .hidden { display: none; }
-        
-        /* 📋 Form Styling */
-        .form-group { margin-bottom: 14px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #444; }
-        input, select { width: 100%; padding: 11px; border: 1px solid #dcdcdc; border-radius: 8px; font-size: 14px; transition: border 0.2s; background: #fdfdfd; }
-        input:focus, select:focus { border-color: var(--primary); outline: none; background: white; }
-        
-        /* 🔘 Buttons & Badges */
-        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        .btn:hover { opacity: 0.9; }
-        .btn-danger { background: var(--danger); }
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; background: #ffeaa7; color: #d63031; }
-        .status-badge.success { background: #d4edda; color: #155724; }
-        .status-badge.done { background: #e2e3e5; color: #383d41; }
-        
-        /* 👤 Profile Section */
-        .user-profile { display: flex; align-items: center; gap: 10px; background: #f8f9fa; padding: 10px 12px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
-        .user-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; background: #ccc; border: 1px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .user-name { font-size: 13px; font-weight: 600; color: #555; }
-        
-        .admin-box { border: 1px solid #e0e0e0; padding: 12px; margin-bottom: 10px; border-radius: 10px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tuk Tuk Cafe</title>
+<style>
+body{
+font-family:sans-serif;
+background:#f4f7f3;
+padding:15px;
+margin:0;
+}
+.card{
+background:white;
+padding:20px;
+border-radius:20px;
+margin-bottom:15px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+input,select,textarea,button{
+width:100%;
+padding:14px;
+margin-top:8px;
+border-radius:10px;
+border:1px solid #ccc;
+font-size:18px;
+box-sizing:border-box;
+}
+button{
+background:#2d5a27;
+color:white;
+border:none;
+font-weight:bold;
+}
+.status{
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+}
+.green{
+background:#d4edda;
+}
+.orange{
+background:#fff3cd;
+}
+</style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>🌱 จองน้ำผักปั่นหมอเขียว นวมินทร์46</h1>
-    </div>
+<div class="card">
+<h2>🌱 จองน้ำผักปั่น</h2>
 
-    <div class="nav-menu">
-        <div class="nav-item active" id="tab-reserve" onclick="switchPage('reserve')">🌿 จองน้ำผัก</div>
-        <div class="nav-item" id="tab-status" onclick="switchPage('status')">🔍 คิวของฉัน</div>
-        <div class="nav-item" id="tab-slip" onclick="switchPage('slip')">💰 ส่งสลิป</div>
-        <div class="nav-item" style="display:none; background:#fff0f0; color:var(--danger);" id="tab-admin" onclick="switchPage('admin')">⚙️ แผงแอดมิน</div>
-    </div>
+<input id="name" placeholder="ชื่อ">
+<input id="phone" placeholder="เบอร์โทร">
 
-    <div class="container">
+<select id="date"></select>
+<select id="time"></select>
 
-        <div id="page-reserve">
-            <div class="card">
-                <h2>🌿 ลงทะเบียนสั่งจองน้ำผักปั่น</h2>
-                
-                <div class="user-profile">
-                    <img id="profile-img" class="user-avatar" src="" alt="Avatar" style="display:none;">
-                    <span id="profile-text" class="user-name">⏳ กำลังเชื่อมต่อข้อมูลระบบโปรไฟล์ LINE...</span>
-                </div>
+<input id="amount" type="number" value="1">
 
-                <form id="bookingForm">
-                    <div class="form-group">
-                        <label>ชื่อผู้รับน้ำผักปั่น:</label>
-                        <input type="text" id="cust-name" required placeholder="กรุณากรอกชื่อของคุณ">
-                    </div>
-                    <div class="form-group">
-                        <label>เบอร์โทรศัพท์ติดต่อ:</label>
-                        <input type="tel" id="cust-phone" pattern="[0-9]{9,10}" required placeholder="เช่น 0661414955">
-                    </div>
-                    <div class="form-group">
-                        <label>📅 เลือกวันที่ต้องการนัดรับสินค้าหน้าร้าน:</label>
-                        <select id="res-date" required>
-                            <option value="">⏳ กำลังดึงตารางวันรอบปั่นล่าสุด...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>🥤 จำนวนที่ต้องการสั่งจอง (ขวด):</label>
-                        <input type="number" id="res-amount" min="1" max="20" value="1" required>
-                    </div>
-                    <button type="submit" id="submit-btn" class="btn">ยืนยันการส่งคำสั่งจองคิว 🟢</button>
-                </form>
-            </div>
-        </div>
+<textarea id="note" placeholder="หมายเหตุ"></textarea>
 
-        <div id="page-status" class="hidden">
-            <div class="card">
-                <h2>🔍 รายการจองคิวของคุณ</h2>
-                <div id="status-list"><p style="color:#999; text-align:center;">กำลังดึงข้อมูลคิวจอง...</p></div>
-            </div>
-        </div>
+<div id="totalBox"></div>
 
-        <div id="page-slip" class="hidden">
-            <div class="card">
-                <h2>💰 แจ้งหลักฐานการสมทบทุน/ชำระเงิน</h2>
-                <p style="font-size:13px; color:#555; background:#fff9db; padding:10px; border-radius:8px; border-left:4px solid #f5b041;">
-                    💰 <b>บัญชีรับโอน:</b> ธนาคารกสิกรไทย<br>เลขที่บัญชี: <b>123-4-56789-0</b><br>ชื่อบัญชี: น้ำผักปั่นหมอเขียว นวมินทร์46
-                </p>
-                <div class="form-group">
-                    <label>พิมพ์รหัสใบสั่งจองเพื่อแจ้งโอน (เช่น MK1234):</label>
-                    <input type="text" id="slip-id" placeholder="ระบุรหัสคิวของคุณ" ถือเป็นส่วนสำคัญ>
-                </div>
-                <div class="form-group">
-                    <label>แนบรูปสลิปหลักฐานการโอนเงิน:</label>
-                    <input type="file" id="slip-file" accept="image/*">
-                </div>
-                <button class="btn" onclick="alert('🧾 ระบบบันทึกข้อมูลเรียบร้อยแล้วค่ะ\nแอดมินจะตรวจสอบสลิปและอัปเดตสถานะให้โดยเร็วที่สุดนะคะรอบนี้')">ส่งหลักฐานแจ้งโอนเงิน ➔</button>
-            </div>
-        </div>
+<button onclick="submitBooking()">
+ยืนยันการจอง
+</button>
+</div>
 
-        <div id="page-admin" class="hidden">
-            <div class="card" style="border: 1px solid var(--danger);">
-                <h2 style="color:var(--danger);">📅 จัดการวันเปิด-ปิดรอบปั่นน้ำผัก</h2>
-                <div class="form-group" style="background:#fff5f5; padding:12px; border-radius:8px; border:1px dashed #feb2b2;">
-                    <label>➕ เพิ่มวันเปิดรอบปั่นเป็นกรณีพิเศษ:</label>
-                    <input type="date" id="admin-new-date" style="margin-bottom:8px;">
-                    <button class="btn" style="background:#2980b9;" onclick="adminAddDate()">บันทึกวันเปิดรอบพิเศษนี้เข้าตาราง</button>
-                </div>
-                <div id="admin-calendar-list"></div>
+<div class="card">
+<h2>📋 คิวของฉัน</h2>
 
-                <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-                
-                <h2 style="color:var(--primary);">📋 รายการคิวสั่งจองของสมาชิกทั้งหมด</h2>
-                <div id="admin-orders-list"></div>
-            </div>
-        </div>
+<button onclick="loadMyBooking()">
+โหลดคิวล่าสุด
+</button>
 
-    </div>
+<div id="myBooking"></div>
+</div>
 
-    <script>
-        // 🚨 สลับตั้งค่า 3 จุดนี้ให้ตรงกับข้อมูลจริงของระบบคุณพุสดีค่ะ
-        const SUPABASE_URL = 'https://VegSmooties.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFldW1qdmV4bmtwdmxmdmpwaWJuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NjE2OTAsImV4cCI6MjA5NTAzNzY5MH0.4mEOhu-wxWK135dPhgRhHlhlbZhYaq8kUsFiokyQ2Us';
-        const LIFF_ID = '2010105389-6iknG2pA'; 
+<script>
 
-        // 👥 รายชื่อกลุ่มผู้ดูแลระบบ (ใส่ LINE User ID ของแอดมินทุกคนลงที่นี่)
-        const ADMIN_UIDS = [
-          "U35fc31a81f00e2b9fff0e5943c427ea4", // ตัวอย่าง UID แอดมิน (ของคุณพุสดี)
-          "U2222222222abcdef222222222222222"  
-        ];
+const API_URL = 'YOUR_GAS_WEBAPP_URL';
+const PRICE = 30;
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let LINE_UID = "GUEST_USER";
+let openDates = [];
 
-        window.onload = function() {
-            initLiff();
-        };
+window.onload = ()=>{
 
-        function initLiff() {
-            liff.init({ liffId: LIFF_ID }).then(() => {
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    liff.getProfile().then(profile => {
-                        LINE_UID = profile.userId;
-                        
-                        // 👤 ทำการ Auto-fill ข้อมูลตามคำแนะนำของบทความ LINE Developers
-                        document.getElementById('profile-text').innerText = `คุณ ${profile.displayName}`;
-                        document.getElementById('cust-name').value = profile.displayName;
-                        
-                        if(profile.pictureUrl) {
-                            const img = document.getElementById('profile-img');
-                            img.src = profile.pictureUrl;
-                            img.style.display = 'block';
-                        }
-                        
-                        loadShopCalendar();
-                        checkAdminPermission();
-                    });
-                }
-            }).catch(err => {
-                document.getElementById('profile-text').innerText = "⚠️ ทดสอบระบบภายนอกแอป LINE";
-                loadShopCalendar();
-            });
-        }
+loadDates();
 
-        function checkAdminPermission() {
-            if (ADMIN_UIDS.includes(LINE_UID)) {
-                document.getElementById('tab-admin').style.display = 'block';
-            }
-        }
+const phone = localStorage.getItem('customer_phone');
 
-        // 📅 ดึงวันเปิดรอบปั่นหมอเขียวจากฐานข้อมูลมาแสดงใน Dropdown
-        async function loadShopCalendar() {
-            let todayStr = new Date().toISOString().split('T')[0];
-            let { data: dates } = await supabase
-                .from('morkhiao_calendar')
-                .select('*')
-                .gte('open_date', todayStr)
-                .eq('status', '✅ เปิดร้าน')
-                .order('open_date', { ascending: true });
+if(phone){
+  loadMyBooking();
+}
 
-            const select = document.getElementById('res-date');
-            if(!select) return;
-            select.innerHTML = '';
+}
 
-            if (dates && dates.length > 0) {
-                dates.forEach(d => {
-                    let opt = document.createElement('option');
-                    opt.value = d.open_date;
-                    let displayDate = new Date(d.open_date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
-                    opt.text = displayDate;
-                    select.add(opt);
-                });
-            } else {
-                select.innerHTML = '<option value="">❌ ขออภัย ช่วงนี้ไม่มีกำหนดวันรอบปั่นน้ำผักเปิดจอง</option>';
-            }
-        }
+async function api(data){
 
-        // 🥤 บันทึกคิวจองลงฐานข้อมูล Supabase รวดเร็ว ปลอดภัย ไร้การหมุนค้าง
-        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-            btn.innerText = "กำลังทำการบันทึกใบจอง... ⏳";
+const res = await fetch(API_URL,{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify(data)
+});
 
-            const code = "MK" + Math.floor(1000 + Math.random() * 9000);
-            
-            const { error } = await supabase.from('morkhiao_bookings').insert([{
-                booking_code: code,
-                booking_date: document.getElementById('res-date').value,
-                customer_name: document.getElementById('cust-name').value,
-                customer_phone: document.getElementById('cust-phone').value,
-                amount: parseInt(document.getElementById('res-amount').value),
-                line_uid: LINE_UID
-            }]);
+return await res.json();
 
-            if(!error) {
-                alert(`🎉 สำเร็จค่ะ!\nรหัสจองคิวของคุณคือ: ${code}\nกรุณาส่งหลักฐานโอนเงินที่แท็บส่งสลิปนะคะ`);
-                switchPage('status');
-            } else {
-                alert("❌ เกิดข้อผิดพลาดของระบบฐานข้อมูล กรุณาลองใหม่อีกครั้งค่ะ");
-            }
-            btn.disabled = false;
-            btn.innerText = "ยืนยันการส่งคำสั่งจองคิว 🟢";
-        });
+}
 
-        // 🔍 ลูกค้าเรียกดูคิวเฉพาะส่วนตัวโดยคัดกรองจาก LINE_UID
-        async function fetchMyQueue() {
-            let { data: bks } = await supabase.from('morkhiao_bookings').select('*').eq('line_uid', LINE_UID).order('id', { ascending: false });
-            const box = document.getElementById('status-list');
-            box.innerHTML = bks && bks.length > 0 ? '' : '<p style="text-align:center;color:#999;padding:20px;">ไม่มีประวัติคิวจองน้ำผักของคุณในระบบ</p>';
-            
-            if(bks) {
-                bks.forEach(item => {
-                    let badgeClass = item.status === 'ชำระเงินสำเร็จ' ? 'status-badge success' : (item.status === 'รับของแล้ว' ? 'status-badge done' : 'status-badge');
-                    let dText = new Date(item.booking_date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-                    box.innerHTML += `
-                        <div style="border:1px solid #eee; padding:14px; margin-bottom:10px; border-radius:10px; background:#fafafa;">
-                            <div style="display:flex; justify-content:between; align-items:center; margin-bottom:6px;">
-                                <span>รหัสคิว: <b style="color:var(--primary); font-size:15px;">${item.booking_code}</b></span>
-                                <span class="${badgeClass}" style="margin-left:auto;">${item.status}</span>
-                            </div>
-                            <div style="font-size:12px; color:#666;">รอบนัดรับ: วัน${dText} | ยอดจอง: <b>${item.amount} ขวด</b></div>
-                        </div>`;
-                });
-            }
-        }
+async function loadDates(){
 
-        /* ⚙️ โหมดหลังบ้าน: เมนูและคำสั่งสำหรับทีมแอดมินหมอเขียว */
-        async function loadAdminDashboard() {
-            if (!ADMIN_UIDS.includes(LINE_UID)) return;
-            let todayStr = new Date().toISOString().split('T')[0];
-            
-            // 1. เรียกปฏิทินงานมาคุมสวิตช์ เปิด-ปิด
-            let { data: cal } = await supabase.from('morkhiao_calendar').select('*').gte('open_date', todayStr).order('open_date', { ascending: true });
-            const calBox = document.getElementById('admin-calendar-list');
-            calBox.innerHTML = '<h3 style="font-size:14px; margin:15px 0 8px 0; color:#555;">📅 ตารางเปิดรอบจองบนระบบปัจจุบัน</h3>';
-            if(cal) {
-                cal.forEach(c => {
-                    let dText = new Date(c.open_date).toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short' });
-                    calBox.innerHTML += `
-                        <div class="admin-box" style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:13px;">📅 รอบ ${dText} -> <b>${c.status}</b></span>
-                            <button class="btn" style="width:auto; padding:4px 8px; font-size:11px; background:#e67e22;" onclick="adminToggleDate(${c.id}, '${c.status}')">สลับเปิด/ปิด</button>
-                        </div>`;
-                });
-            }
+const result = await api({
+action:'getOpenDates'
+});
 
-            // 2. เรียกดูตารางคิวจองรวมของลูกค้าทุกคนในระบบ
-            let { data: orders } = await supabase.from('morkhiao_bookings').select('*').order('id', { ascending: false });
-            const ordBox = document.getElementById('admin-orders-list');
-            ordBox.innerHTML = '';
-            if(orders) {
-                orders.forEach(o => {
-                    let dText = new Date(o.booking_date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
-                    ordBox.innerHTML += `
-                        <div class="admin-box">
-                            <div style="font-size:13px; margin-bottom:4px;"><b>คิว: ${o.booking_code}</b> | คุณ ${o.customer_name} (${o.customer_phone})</div>
-                            <div style="font-size:12px; color:#666;">รอบรับ: ${dText} | ยอดสั่ง: <b style="color:var(--primary);">${o.amount} ขวด</b></div>
-                            <div style="margin-top:8px; display:flex; align-items:center; gap:10px;">
-                                <span class="status-badge">${o.status}</span>
-                                <select style="width:auto; padding:3px; font-size:12px; margin-left:auto;" onchange="adminUpdateStatus(${o.id}, this.value)">
-                                    <option value="">-- เปลี่ยนสถานะ --</option>
-                                    <option value="ชำระเงินสำเร็จ">✅ ชำระเงินสำเร็จ</option>
-                                    <option value="รับของแล้ว">🥤 รับของแล้ว</option>
-                                    <option value="ยกเลิกออเดอร์">❌ ยกเลิกออเดอร์</option>
-                                </select>
-                            </div>
-                        </div>`;
-                });
-            }
-        }
+openDates = result.dates;
 
-        async function adminAddDate() {
-            let newDate = document.getElementById('admin-new-date').value;
-            if(!newDate) return alert("กรุณาเลือกวันที่ก่อนค่ะ");
-            
-            const { error } = await supabase.from('morkhiao_calendar').insert([{ open_date: newDate, status: '✅ เปิดร้าน' }]);
-            if(!error) { alert("เพิ่มรอบปั่นเรียบร้อยค่ะ!"); loadAdminDashboard(); loadShopCalendar(); }
-            else { alert("วันนี้ถูกเพิ่มไว้ในระบบเรียบร้อยแล้วค่ะ"); }
-        }
+const select = document.getElementById('date');
 
-        async function adminToggleDate(id, currentStatus) {
-            let nextStatus = currentStatus === '✅ เปิดร้าน' ? '❌ ปิดร้าน' : '✅ เปิดร้าน';
-            await supabase.from('morkhiao_calendar').update({ status: nextStatus }).eq('id', id);
-            loadAdminDashboard();
-            loadShopCalendar();
-        }
+select.innerHTML = '';
 
-        async function adminUpdateStatus(id, nextStatus) {
-            if(!nextStatus) return;
-            await supabase.from('morkhiao_bookings').update({ status: nextStatus }).eq('id', id);
-            alert("ปรับปรุงสถานะเรียบร้อยแล้วค่ะ");
-            loadAdminDashboard();
-        }
+result.dates.forEach(d=>{
 
-        function switchPage(pageId) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + pageId).classList.add('active');
-            document.getElementById('page-reserve').classList.add('hidden');
-            document.getElementById('page-status').classList.add('hidden');
-            document.getElementById('page-slip').classList.add('hidden');
-            document.getElementById('page-admin').classList.add('hidden');
-            document.getElementById('page-' + pageId).classList.remove('hidden');
-            
-            if(pageId === 'status') fetchMyQueue();
-            if(pageId === 'admin') loadAdminDashboard();
-        }
-    </script>
+const opt = document.createElement('option');
+opt.value = d.date;
+opt.innerText = d.display;
+
+select.appendChild(opt);
+
+});
+
+updateTime();
+
+}
+
+function updateTime(){
+
+const date = document.getElementById('date').value;
+
+const found = openDates.find(x=>x.date==date);
+
+const timeSelect = document.getElementById('time');
+
+if(!found) return;
+
+const slots = found.timeslot.split(',');
+
+timeSelect.innerHTML = '';
+
+slots.forEach(s=>{
+
+const opt = document.createElement('option');
+opt.value = s.trim();
+opt.innerText = s.trim();
+
+timeSelect.appendChild(opt);
+
+});
+
+}
+
+document.getElementById('date').addEventListener('change',updateTime);
+
+document.getElementById('amount').addEventListener('input',()=>{
+
+const amount = Number(document.getElementById('amount').value);
+
+const total = amount * PRICE;
+
+document.getElementById('totalBox').innerHTML = `
+<h3>
+ยอดชำระ ${total} บาท
+</h3>
+`;
+
+});
+
+async function submitBooking(){
+
+const payload = {
+action:'createBooking',
+name:document.getElementById('name').value,
+phone:document.getElementById('phone').value,
+date:document.getElementById('date').value,
+time:document.getElementById('time').value,
+amount:document.getElementById('amount').value,
+note:document.getElementById('note').value
+};
+
+const result = await api(payload);
+
+if(result.success){
+
+localStorage.setItem('customer_phone',payload.phone);
+
+alert('จองสำเร็จ เลขคิว '+result.bookingId);
+
+loadMyBooking();
+
+}
+
+}
+
+async function loadMyBooking(){
+
+const phone = localStorage.getItem('customer_phone') || document.getElementById('phone').value;
+
+const result = await api({
+action:'getBooking',
+phone:phone
+});
+
+let html = '';
+
+result.rows.forEach(r=>{
+
+html += `
+<div class="status green">
+<h3>${r.bookingId}</h3>
+<div>${r.date}</div>
+<div>${r.time}</div>
+<div>${r.amount} ขวด</div>
+<div>${r.total} บาท</div>
+<div>${r.paymentStatus}</div>
+</div>
+`;
+
+});
+
+document.getElementById('myBooking').innerHTML = html;
+
+}
+
+</script>
+
 </body>
 </html>
